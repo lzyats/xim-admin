@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.modules.chat.dao.ChatGroupInformDao">
+
+    <!-- 查询列表字段 -->
+    <select id="queryList" resultType="com.platform.modules.chat.domain.ChatGroupInform">
+        select a.inform_id, a.inform_type, a.images, a.content, a.status, a.create_time, a.user_id, a.group_id
+        , b.user_no, b.nickname
+        , d.group_no, d.group_name
+        from chat_group_inform a
+        left join chat_user b on a.user_id = b.user_id
+        left join chat_group d on a.group_id = d.group_id
+        <where>
+            <if test="status != null">
+                and a.status = #{status.code}
+            </if>
+            <if test="informType != null">
+                and a.inform_type = #{informType.code}
+            </if>
+        </where>
+    </select>
+
+</mapper>

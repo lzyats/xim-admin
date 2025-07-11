@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.modules.sys.dao.SysUserDao">
+
+    <sql id="baseSql">
+        select user_id, role_id, username, nickname, status, remark from sys_user
+    </sql>
+
+    <select id="queryList" resultType="com.platform.modules.sys.domain.SysUser">
+        <include refid="baseSql"/>
+        <where>
+            <if test="username != null and username != ''">
+                AND username like concat('%', #{username}, '%')
+            </if>
+            <if test="status != null">
+                AND status = #{status.code}
+            </if>
+            <if test="roleId != null">
+                AND role_id = #{roleId}
+            </if>
+            <if test="param != null and param != ''">
+                AND username != #{param}
+            </if>
+        </where>
+    </select>
+
+</mapper>

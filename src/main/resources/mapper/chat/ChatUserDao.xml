@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.modules.chat.dao.ChatUserDao">
+
+    <!-- 字段集 -->
+    <sql id="baseSql">
+        select user_id, phone, user_no, email, nickname, portrait, remark, gender, birthday, intro, province, city, salt, password,
+        pass, banned, special, abnormal, payment, privacy_no, privacy_phone, privacy_scan, privacy_card, privacy_group,
+        ip, ip_addr, login_wx, login_ios, login_qq, on_line, create_time from chat_user
+    </sql>
+
+    <!-- 查询列表字段 -->
+    <select id="queryList" resultType="com.platform.modules.chat.domain.ChatUser">
+        <include refid="baseSql"/>
+        <where>
+            and deleted = 0
+        </where>
+    </select>
+
+    <!-- 字段集 -->
+    <sql id="leftSql">
+        select a.user_id, a.phone, a.user_no, a.email, a.nickname, a.portrait, a.remark, a.create_time, a.on_line, a.auth, a.special, a.abnormal, a.banned, a.ip, a.ip_addr, a.deleted
+    </sql>
+
+    <select id="queryDataList" resultType="com.platform.modules.chat.domain.ChatUser">
+        <include refid="leftSql"/>, b.balance, d.id_card
+        from chat_user a
+        inner join wallet_info b on a.user_id = b.user_id
+        inner join chat_user_info d on a.user_id = d.user_id
+        <where>
+            <if test="nickname != null and nickname != ''">
+                AND a.nickname like concat('%', #{nickname}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                and a.phone = #{phone}
+            </if>
+            <if test="userNo != null and userNo != ''">
+                and a.user_no = #{userNo}
+            </if>
+            <if test="banned != null">
+                and a.banned = #{banned.code}
+            </if>
+            <if test="special != null">
+                and a.special = #{special.code}
+            </if>
+            <if test="auth != null">
+                and a.auth = #{auth.code}
+            </if>
+            <if test="status != null">
+                <if test="status == @com.platform.common.enums.YesOrNoEnum@YES">
+                    and a.deleted = 0
+                </if>
+                <if test="status == @com.platform.common.enums.YesOrNoEnum@NO">
+                    and a.deleted IS NULL
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAuthList" resultType="com.platform.modules.chat.domain.ChatUser">
+        select a.user_id, a.phone, a.user_no, a.nickname, a.portrait, a.auth, a.banned, a.deleted, b.auth_time, b.name, b.id_card
+        from chat_user a
+        inner join chat_user_info b on a.user_id = b.user_id
+        <where>
+            <if test="nickname != null and nickname != ''">
+                AND a.nickname like concat('%', #{nickname}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                and a.phone = #{phone}
+            </if>
+            <if test="userNo != null and userNo != ''">
+                and a.user_no = #{userNo}
+            </if>
+            <if test="auth != null">
+                and a.auth = #{auth.code}
+            </if>
+            <if test="idCard != null and idCard != ''">
+                and b.id_card = #{idCard}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryBannedList" resultType="com.platform.modules.chat.domain.ChatUser">
+        select a.user_id, a.phone, a.user_no, a.nickname, a.portrait, a.banned, b.create_time
+        from chat_user a
+        inner join chat_user_appeal b on a.user_id = b.user_id
+        <where>
+            <if test="nickname != null and nickname != ''">
+                AND a.nickname like concat('%', #{nickname}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                and a.phone = #{phone}
+            </if>
+            <if test="userNo != null and userNo != ''">
+                and a.user_no = #{userNo}
+            </if>
+            <if test="banned != null">
+                and a.banned = #{banned.code}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryBannedCount" resultType="java.lang.Long">
+        select count(1)
+        from chat_user a
+        inner join chat_user_appeal b on a.user_id = b.user_id
+        <where>
+            and a.banned = 'Y'
+        </where>
+    </select>
+
+</mapper>

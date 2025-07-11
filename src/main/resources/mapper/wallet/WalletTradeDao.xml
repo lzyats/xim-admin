@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.modules.wallet.dao.WalletTradeDao">
+
+    <!-- 字段集 -->
+    <sql id="baseSql">
+        select trade_id, trade_type, trade_amount, trade_balance, trade_count, trade_remark, source_id, source_type, user_id, user_no, nickname, phone, portrait, group_id, group_no, group_name, receive_id, receive_no, receive_name, receive_phone, receive_phone, create_time, update_time from wallet_trade
+    </sql>
+
+    <!-- 查询列表字段 -->
+    <select id="queryList" resultType="com.platform.modules.wallet.domain.WalletTrade">
+        <include refid="baseSql"/>
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="nickname != null and nickname != ''">
+                AND nickname like concat('%', #{nickname}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="userNo != null and userNo != ''">
+                and user_no = #{userNo}
+            </if>
+            <if test="tradeType != null">
+                and trade_type = #{tradeType.code}
+            </if>
+            <if test="tradeStatus != null">
+                and trade_status = #{tradeStatus.code}
+            </if>
+        </where>
+    </select>
+
+</mapper>

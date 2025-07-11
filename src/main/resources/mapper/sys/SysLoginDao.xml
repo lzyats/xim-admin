@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.modules.sys.dao.SysLoginDao">
+
+    <sql id="baseSql">
+        select log_id, username, ip_addr, location, browser, os, status, message, create_time
+        from sys_login
+    </sql>
+
+    <select id="queryList" resultType="com.platform.modules.sys.domain.SysLogin">
+        <include refid="baseSql"/>
+        <where>
+            <if test="ipAddr != null and ipAddr != ''">
+                AND ip_addr = #{ipAddr}
+            </if>
+            <if test="status != null">
+                AND status = #{status.code}
+            </if>
+            <if test="username != null and username != ''">
+                AND username like concat('%', #{username}, '%')
+            </if>
+            <if test="beginTime != null and endTime != null">
+                and create_time BETWEEN #{beginTime} and #{endTime}
+            </if>
+        </where>
+    </select>
+
+</mapper> 

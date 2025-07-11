@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.modules.wallet.dao.WalletRechargeDao">
+
+    <!-- 字段集 -->
+    <sql id="baseSql">
+        select trade_id, user_id, user_no, phone, nickname, pay_type, amount, trade_no, order_no, create_time, update_time from wallet_recharge
+    </sql>
+
+    <!-- 查询列表字段 -->
+    <select id="queryList" resultType="com.platform.modules.wallet.domain.WalletRecharge">
+        <include refid="baseSql"/>
+        <where>
+
+        </where>
+    </select>
+
+    <select id="statistics" resultType="com.platform.modules.statistics.vo.StatisticsVo01">
+        select DATE(create_time) AS create_time
+        , COUNT(DISTINCT trade_id) AS totalCount
+        , SUM( amount) AS totalAmount
+        , SUM(IF (pay_type=0, 1, 0)) AS platformCount
+        , SUM(if (pay_type=0, amount, 0)) AS platformAmount
+        , SUM(IF (pay_type=1, 1, 0)) AS aliCount
+        , SUM(IF (pay_type=1, amount, 0)) AS aliAmount
+        , SUM(IF (pay_type=2, 1, 0)) AS wxCount
+        , SUM(IF (pay_type=2, amount, 0)) AS wxAmount
+        from wallet_recharge
+        where create_time BETWEEN #{beginTime} and #{endTime}
+        group by DATE(create_time)
+    </select>
+
+</mapper>
