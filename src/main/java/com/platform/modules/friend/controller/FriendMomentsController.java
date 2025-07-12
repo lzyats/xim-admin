@@ -8,12 +8,14 @@ import com.platform.common.aspectj.AppLog;
 import com.platform.common.enums.LogTypeEnum;
 import com.platform.common.web.page.TableDataInfo;
 import com.platform.common.web.domain.AjaxResult;
+import com.platform.modules.friend.vo.FriendVo02;
 import org.springframework.web.bind.annotation.*;
 import com.platform.modules.friend.service.FriendMomentsService;
 import com.platform.modules.friend.domain.FriendMoments;
 import com.platform.common.web.controller.BaseController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.validation.annotation.Validated;
+import com.platform.modules.friend.vo.FriendVo01;
 
 /**
  * <p>
@@ -44,9 +46,9 @@ public class FriendMomentsController extends BaseController {
      * 详细信息 TODO
      */
     @RequiresPermissions(value = {"friend:moments:query"})
-    @GetMapping("/info/{id}")
-    public AjaxResult getInfo(@PathVariable Long id) {
-        return AjaxResult.success(friendMomentsService.getById(id));
+    @GetMapping("/info/{momentId}")
+    public AjaxResult getInfo(@PathVariable Long momentId) {
+        return AjaxResult.success(friendMomentsService.getById(momentId));
     }
 
     /**
@@ -55,8 +57,9 @@ public class FriendMomentsController extends BaseController {
     @RequiresPermissions(value = {"friend:moments:add"})
     @AppLog(value = title, type = LogTypeEnum.ADD)
     @PostMapping("/add")
-    public AjaxResult add(@Validated @RequestBody FriendMoments friendMoments) {
-        friendMomentsService.add(friendMoments);
+    public AjaxResult add(@Validated @RequestBody FriendVo01 friendVo) {
+        //friendMomentsService.add(friendMoments);
+        friendMomentsService.addMoments(friendVo);
         return AjaxResult.successMsg("新增成功");
     }
 
@@ -66,8 +69,9 @@ public class FriendMomentsController extends BaseController {
     @RequiresPermissions(value = {"friend:moments:edit"})
     @AppLog(value = title, type = LogTypeEnum.EDIT)
     @PostMapping("/edit")
-    public AjaxResult edit(@Validated @RequestBody FriendMoments friendMoments) {
-        friendMomentsService.updateById(friendMoments);
+    public AjaxResult edit(@Validated @RequestBody FriendVo02 friendVo2) {
+
+        friendMomentsService.editMoments(friendVo2);
         return AjaxResult.successMsg("修改成功");
     }
 
@@ -93,16 +97,7 @@ public class FriendMomentsController extends BaseController {
         return AjaxResult.successMsg("删除成功");
     }
 
-    /**
-     * 状态修改 TODO
-     */
-    @RequiresPermissions(value = {"friend:moments:edit"})
-    @AppLog(value = title, type = LogTypeEnum.EDIT)
-    @PostMapping("/status")
-    public AjaxResult status(@RequestBody FriendMoments friendMoments) {
-        friendMomentsService.status(friendMoments);
-        return AjaxResult.success();
-    }
+
 
 }
 

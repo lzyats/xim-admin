@@ -1,6 +1,6 @@
 package com.platform.modules.friend.dao;
 
-import com.platform.modules.friend.domain.FriendMediaResources;
+import com.platform.modules.friend.domain.FriendMedia;
 import org.springframework.stereotype.Repository;
 import com.platform.common.web.dao.BaseDao;
 import java.util.List;
@@ -11,11 +11,11 @@ import java.util.List;
  * </p>
  */
 @Repository
-public interface FriendMediaResourcesDao extends BaseDao<FriendMediaResources> {
+public interface FriendMediaDao extends BaseDao<FriendMedia> {
 
     /**
      * 查询列表
      */
-    List<FriendMediaResources> queryList(FriendMediaResources friendMediaResources);
+    List<FriendMedia> queryList(FriendMedia friendMedia);
 
 }

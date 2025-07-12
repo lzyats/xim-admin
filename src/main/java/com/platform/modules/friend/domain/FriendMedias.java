@@ -15,9 +15,9 @@ import lombok.experimental.Accessors;
  * </p>
  */
 @Data
-@TableName("friend_media_resources")
+@TableName("friend_medias")
 @Accessors(chain = true) // 链式调用
-public class FriendMediaResources extends BaseEntity {
+public class FriendMedias extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -66,5 +66,24 @@ public class FriendMediaResources extends BaseEntity {
      * 创建时间
      */
     private Date createTime;
+
+    public FriendMedias(Long momentId) {
+        this.momentId = momentId;
+    }
+
+    /**
+     * 字段
+     */
+    public static final String LABEL_MEDIA_ID = "mediaId";
+    public static final String LABEL_MOMENT_ID = "momentId";
+    public static final String LABEL_MOMID = "momid";
+    public static final String LABEL_URL = "url";
+    public static final String LABEL_THUMBNAIL = "thumbnail";
+    public static final String LABEL_TYPE = "type";
+    public static final String LABEL_SORT_ORDER = "sortOrder";
+    public static final String LABEL_WIDTH = "width";
+    public static final String LABEL_HEIGHT = "height";
+    public static final String LABEL_DURATION = "duration";
+    public static final String LABEL_CREATE_TIME = "createTime";
 
 }

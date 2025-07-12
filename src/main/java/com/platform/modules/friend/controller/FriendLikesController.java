@@ -93,16 +93,5 @@ public class FriendLikesController extends BaseController {
         return AjaxResult.successMsg("删除成功");
     }
 
-    /**
-     * 状态修改 TODO
-     */
-    @RequiresPermissions(value = {"friend:likes:edit"})
-    @AppLog(value = title, type = LogTypeEnum.EDIT)
-    @PostMapping("/status")
-    public AjaxResult status(@RequestBody FriendLikes friendLikes) {
-        friendLikesService.status(friendLikes);
-        return AjaxResult.success();
-    }
-
 }
 

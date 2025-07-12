@@ -55,4 +55,10 @@ public class FriendMoments extends BaseEntity {
      */
     private Integer isDeleted;
 
+    public FriendMoments(Long momentId) {
+        this.momentId = momentId;
+    }
+
+
+
 }

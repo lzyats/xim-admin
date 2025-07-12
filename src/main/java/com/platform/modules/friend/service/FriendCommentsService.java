@@ -2,6 +2,9 @@ package com.platform.modules.friend.service;
 
 import com.platform.modules.friend.domain.FriendComments;
 import com.platform.common.web.service.BaseService;
+import cn.hutool.core.lang.Dict;
+import com.github.pagehelper.PageInfo;
+import com.platform.modules.friend.vo.*;
 
 /**
  * <p>
@@ -9,5 +12,15 @@ import com.platform.common.web.service.BaseService;
  * </p>
  */
 public interface FriendCommentsService extends BaseService<FriendComments> {
+
+    /**
+     * 列表
+     */
+    PageInfo queryListall(Long momentId);
+
+    /**
+     * 新增
+     */
+    void addComments(FriendVo03 friendVo);
 
 }
