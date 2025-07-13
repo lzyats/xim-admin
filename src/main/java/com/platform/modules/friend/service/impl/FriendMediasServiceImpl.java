@@ -2,18 +2,23 @@ package com.platform.modules.friend.service.impl;
 
 import javax.annotation.Resource;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Dict;
 import com.github.pagehelper.PageInfo;
+import com.platform.common.exception.BaseException;
+import com.platform.modules.friend.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.platform.common.web.service.impl.BaseServiceImpl;
 import com.platform.modules.friend.service.FriendMediasService;
 import com.platform.modules.friend.dao.FriendMediasDao;
 import com.platform.modules.friend.domain.FriendMedias;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
@@ -50,13 +55,43 @@ public class FriendMediasServiceImpl extends BaseServiceImpl<FriendMedias> imple
         List<Dict> dictList = dataList.stream().collect(ArrayList::new, (x, y) -> {
             Dict dict = Dict.create().parseBean(y)
                     .filter(FriendMedias.LABEL_MOMENT_ID
+                            , FriendMedias.LABEL_MEDIA_ID
                             , FriendMedias.LABEL_URL
                             , FriendMedias.LABEL_THUMBNAIL
                             , FriendMedias.LABEL_TYPE
+                            , FriendMedias.LABEL_MOMID
+                            , FriendMedias.LABEL_SORT_ORDER
+                            , FriendMedias.LABEL_WIDTH
+                            , FriendMedias.LABEL_HEIGHT
+                            , FriendMedias.LABEL_DURATION
                             , FriendMedias.LABEL_CREATE_TIME);
             x.add(dict);
         }, ArrayList::addAll);
         return getPageInfo(dictList, dataList);
     }
 
+    /**
+     * 添加新评论
+     */
+    @Transactional
+    @Override
+    public void addmedia(FriendVo04 friendVo) {
+        // 验证评论字段
+        Long momentId = friendVo.getMomentId();
+        String url = friendVo.getUrl();
+        Integer type = friendVo.getType();
+        Date now = DateUtil.date();
+        FriendMedias friendMedias = new FriendMedias(momentId)
+                .setMomentId(momentId)
+                .setUrl(url)
+                .setType(type)
+                .setCreateTime(now); // 默认为未删除状态
+
+        try {
+            // 新增评论信息
+            this.add(friendMedias);
+        } catch (org.springframework.dao.DuplicateKeyException e) {
+            throw new BaseException("评论ID已存在，新增失败");
+        }
+    }
 }

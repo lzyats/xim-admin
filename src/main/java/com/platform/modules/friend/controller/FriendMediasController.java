@@ -1,19 +1,25 @@
 package com.platform.modules.friend.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.platform.common.aspectj.AppLog;
 import com.platform.common.enums.LogTypeEnum;
+import com.platform.common.exception.BaseException;
 import com.platform.common.web.page.TableDataInfo;
 import com.platform.common.web.domain.AjaxResult;
+import com.platform.modules.friend.domain.FriendMoments;
 import org.springframework.web.bind.annotation.*;
 import com.platform.modules.friend.service.FriendMediasService;
 import com.platform.modules.friend.domain.FriendMedias;
 import com.platform.common.web.controller.BaseController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.validation.annotation.Validated;
+import com.platform.modules.friend.vo.*;
 
 /**
  * <p>
@@ -46,8 +52,12 @@ public class FriendMediasController extends BaseController {
     @RequiresPermissions(value = {"friend:comments:list"})
     @GetMapping(value = "/listall/{momentId}")
     public TableDataInfo listall(@PathVariable Long momentId) {
-        startPage("createTime");
-        return getDataTable(friendMediasService.queryListall(momentId));
+        QueryWrapper<FriendMedias> wrapper = new QueryWrapper<>();
+        wrapper
+                .eq("moment_id", momentId)
+                .orderByDesc("create_time");
+        List<FriendMedias> list = friendMediasService.queryList(wrapper);
+        return getDataTable(list);
     }
 
     /**
@@ -65,8 +75,8 @@ public class FriendMediasController extends BaseController {
     @RequiresPermissions(value = {"friend:medias:add"})
     @AppLog(value = title, type = LogTypeEnum.ADD)
     @PostMapping("/add")
-    public AjaxResult add(@Validated @RequestBody FriendMedias friendMedias) {
-        friendMediasService.add(friendMedias);
+    public AjaxResult add(@Validated @RequestBody FriendVo04 friendVo04) {
+        friendMediasService.addmedia(friendVo04);
         return AjaxResult.successMsg("新增成功");
     }
 
@@ -77,6 +87,8 @@ public class FriendMediasController extends BaseController {
     @AppLog(value = title, type = LogTypeEnum.EDIT)
     @PostMapping("/edit")
     public AjaxResult edit(@Validated @RequestBody FriendMedias friendMedias) {
+        // 输出字符串（多个字符，使用双引号）
+        System.out.println("Hello, World!"); // 输出字符串并换行
         friendMediasService.updateById(friendMedias);
         return AjaxResult.successMsg("修改成功");
     }

@@ -16,6 +16,8 @@ import com.platform.common.web.controller.BaseController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.validation.annotation.Validated;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
 /**
  * <p>
  * 朋友圈评论表 控制层
@@ -47,8 +49,12 @@ public class FriendCommentsController extends BaseController {
     @RequiresPermissions(value = {"friend:comments:list"})
     @GetMapping(value = "/listall/{momentId}")
     public TableDataInfo listall(@PathVariable Long momentId) {
-        startPage("createTime");
-        return getDataTable(friendCommentsService.queryListall(momentId));
+        QueryWrapper<FriendComments> wrapper = new QueryWrapper<>();
+        wrapper
+                .eq("moment_id", momentId)
+                .orderByDesc("create_time");
+        List<FriendComments> list = friendCommentsService.queryList(wrapper);
+        return getDataTable(list);
     }
 
     /**

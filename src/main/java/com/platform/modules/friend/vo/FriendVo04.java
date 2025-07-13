@@ -18,24 +18,12 @@ public class FriendVo04 {
     private Long momentId;
 
     /**
-     * 用户ID
-     */
-    @NotNull(message = "用户id不能为空")
-    private Long userId;
-
-    /**
      * 朋友圈信息
      */
-    @NotBlank(message = "评论信息不能为空")
-    @Size(max = 300, message = "信息不能超过300个字符")
-    private String content;
+    @NotBlank(message = "图片地址不能为空")
+    @Size(max = 500, message = "图片地址超过300个字符")
+    private String url;
 
-    /**
-     * 用户ID
-     */
-    //@NotNull(message = "用户id不能为空")
-    private Long replyTo;
-
-    private Integer visibility;
+    private Integer type;
 
 }

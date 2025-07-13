@@ -3,11 +3,21 @@ package com.platform.modules.friend.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.platform.common.web.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+
 
 /**
  * <p>
@@ -16,6 +26,8 @@ import lombok.experimental.Accessors;
  */
 @Data
 @TableName("friend_medias")
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Accessors(chain = true) // 链式调用
 public class FriendMedias extends BaseEntity {
 
@@ -29,6 +41,7 @@ public class FriendMedias extends BaseEntity {
     /**
      * 关联动态ID
      */
+    @NotNull(message = "momentId不能为空")
     private Long momentId;
     /**
      * 事件ID
@@ -37,6 +50,8 @@ public class FriendMedias extends BaseEntity {
     /**
      * 资源URL
      */
+    @NotBlank(message = "图像不能为空")
+    @Size(max = 500, message = "图像URL不能超过500个字符")
     private String url;
     /**
      * 缩略图
@@ -65,6 +80,7 @@ public class FriendMedias extends BaseEntity {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
     public FriendMedias(Long momentId) {
