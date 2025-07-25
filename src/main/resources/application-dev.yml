@@ -149,7 +149,7 @@ push:
   masterSecret: WXc25xbCrrAsS4ZILOl8y7
   
 # 上传配置
-upload:
+upload1:
   uploadType: oss
   serverUrl: http://kkimtest.oss-cn-shenzhen.aliyuncs.com
   accessKey: LTAI5tSE8j4h1jmXwwKTkxQL
@@ -157,6 +157,14 @@ upload:
   bucket: kkimtest
   prefix: alpaca
   region: oss-cn-shenzhen.aliyuncs.com
+
+upload:
+  uploadType: minio
+  serverUrl: http://110.42.56.25:19001
+  accessKey: minioadmin
+  secretKey: minioadmin
+  bucket: xim
+  prefix: alpaca
 
 # 腾讯语音识别
 tencent:
