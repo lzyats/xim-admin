@@ -105,5 +105,27 @@ public class OperateVo06 {
     @Min(value = 1, message = "撤回时间不能小于1")
     @Max(value = 9999, message = "撤回时间不能超过999999")
     private Integer recall;
+    /**
+     * 推荐奖励
+     */
+    @Digits(integer = 8, fraction = 2, message = "推荐奖励格式不正确")
+    @DecimalMin(value = "0.01", message = "推荐奖励不能小于0.01")
+    @DecimalMax(value = "999999.00", message = "推荐奖励不能大于999999.00")
+    @NotNull(message = "推荐奖励不能为空")
+    private BigDecimal invo;
+    /**
+     * 签到奖励
+     */
+    @Digits(integer = 8, fraction = 2, message = "签到奖励格式不正确")
+    @DecimalMin(value = "0.01", message = "签到奖励不能小于0.01")
+    @DecimalMax(value = "999999.00", message = "签到奖励不能大于999999.00")
+    @NotNull(message = "签到奖励不能为空")
+    private BigDecimal sign;
+
+    /**
+     * 用户短信开关
+     */
+    @NotNull(message = " 签到奖励开关不能为空")
+    private YesOrNoEnum signtoal;
 
 }

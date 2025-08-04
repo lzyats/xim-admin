@@ -44,6 +44,9 @@ public class OperateConfigServiceImpl implements OperateConfigService {
                 .setShare(configMap.get(ChatConfigEnum.SYS_SHARE).getStr())
                 .setHook(configMap.get(ChatConfigEnum.SYS_HOOK).getStr())
                 .setRecall(configMap.get(ChatConfigEnum.SYS_RECALL).getInt())
+                .setSigntoal(configMap.get(ChatConfigEnum.SYS_SIGNTOAL).getYesOrNo())
+                .setSign(configMap.get(ChatConfigEnum.SYS_SIGN).getBigDecimal())
+                .setInvo(configMap.get(ChatConfigEnum.SYS_INVO).getBigDecimal())
                 ;
     }
 
@@ -82,6 +85,12 @@ public class OperateConfigServiceImpl implements OperateConfigService {
         chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_HOOK).setValue(operateVo.getHook()));
         // 更新
         chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_RECALL).setValue(operateVo.getRecall()));
+        // 更新
+        chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_SIGNTOAL).setValue(operateVo.getSigntoal()));
+        // 更新
+        chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_SIGN).setValue(operateVo.getSign()));
+        // 更新
+        chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_INVO).setValue(operateVo.getInvo()));
     }
 
 }

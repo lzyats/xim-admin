@@ -71,6 +71,18 @@ public enum ChatConfigEnum {
      */
     SYS_AUDIT("sys_audit"),
     /**
+     * 签到奖励开关
+     */
+    SYS_SIGNTOAL("sys_signtoal"),
+    /**
+     * 签到奖励
+     */
+    SYS_SIGN("sys_sign"),
+    /**
+     * 邀请奖励
+     */
+    SYS_INVO("sys_invo"),
+    /**
      * 审核账号
      */
     SYS_PHONE("sys_phone"),
