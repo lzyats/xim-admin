@@ -37,7 +37,8 @@ public class FriendMomentsController extends BaseController {
     @RequiresPermissions(value = {"friend:moments:list"})
     @GetMapping(value = "/list")
     public TableDataInfo list(FriendMoments friendMoments) {
-        startPage();
+        startPage("createTime desc");
+
         List<FriendMoments> list = friendMomentsService.queryList(friendMoments);
         return getDataTable(list);
     }

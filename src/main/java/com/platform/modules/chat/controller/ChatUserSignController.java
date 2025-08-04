@@ -93,16 +93,5 @@ public class ChatUserSignController extends BaseController {
         return AjaxResult.successMsg("删除成功");
     }
 
-    /**
-     * 状态修改 TODO
-     */
-    @RequiresPermissions(value = {"chat:user:sign:edit"})
-    @AppLog(value = title, type = LogTypeEnum.EDIT)
-    @PostMapping("/status")
-    public AjaxResult status(@RequestBody ChatUserSign chatUserSign) {
-        chatUserSignService.status(chatUserSign);
-        return AjaxResult.success();
-    }
-
 }
 
