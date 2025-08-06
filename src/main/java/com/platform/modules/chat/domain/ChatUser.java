@@ -188,6 +188,31 @@ public class ChatUser extends BaseEntity {
      */
     private Integer deleted;
 
+    /**
+     * 用户层级
+     */
+    private Integer userDep;
+
+    /**
+     * 层级关系表
+     */
+    private String userLevel;
+
+    /**
+     * 父级ID
+     */
+    private Long parentId;
+
+    /**
+     * 邀请码
+     */
+    private String incode;
+
+    /**
+     * 是否VIP，0普通1VIP
+     */
+    private Integer isvip;
+
     public ChatUser(Long userId) {
         this.userId = userId;
     }
@@ -225,6 +250,10 @@ public class ChatUser extends BaseEntity {
     public static final String COLUMN_ABNORMAL = "abnormal";
     public static final String COLUMN_IP = "ip";
     public static final String COLUMN_EMAIL = "email";
+    public static final String LABEL_ISVIP= "isvip";
+    public static final String LABEL_USER_DEP= "userDep";
+    public static final String LABEL_USER_LEVEL = "userLevel";
+    public static final String LABEL_PARENT_ID= "parentId";
 
     public PushSync getPushSync() {
         return new PushSync()

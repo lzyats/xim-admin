@@ -10,8 +10,10 @@ import com.platform.common.enums.TimeUnitEnum;
 import com.platform.common.web.vo.LabelVo;
 import com.platform.modules.chat.domain.ChatUser;
 import com.platform.modules.chat.domain.ChatVisit;
+import com.platform.modules.chat.domain.ChatUserSign;
 import com.platform.modules.chat.service.ChatUserLogService;
 import com.platform.modules.chat.service.ChatUserService;
+import com.platform.modules.chat.service.ChatUserSignService;
 import com.platform.modules.chat.service.ChatVisitService;
 import com.platform.modules.statistics.service.StatisticsService;
 import com.platform.modules.statistics.vo.*;
@@ -48,6 +50,9 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Resource
     private WalletCashService walletCashService;
+
+    @Resource
+    private  ChatUserSignService chatUserSignService;
 
     @Resource
     private WalletShoppingService walletShoppingService;
@@ -345,6 +350,14 @@ public class StatisticsServiceImpl implements StatisticsService {
         HashMap<Date, BigDecimal> dataMap4 = walletCashService.queryList(wrapper4).stream().collect(HashMap::new, (x, y) -> {
             x.put(y.getCreateTime(), y.getCharge());
         }, HashMap::putAll);
+        // 签到送出
+        QueryWrapper<ChatUserSign> wrapper5 = new QueryWrapper<>();
+        wrapper5.select("DATE(update_time) AS create_time, SUM(reward_amount) AS 'rewardAmount'");
+        wrapper5.groupBy("DATE(update_time)");
+        wrapper5.between("update_time", beginTime, endTime);
+        HashMap<Date, BigDecimal> dataMap5 = chatUserSignService.queryList(wrapper5).stream().collect(HashMap::new, (x, y) -> {
+            x.put(y.getCreateTime(), y.getRewardAmount());
+        }, HashMap::putAll);
         // 间隔
         long between = DateUtil.between(beginTime, endTime, DateUnit.DAY) + 1;
         // 汇总
@@ -370,17 +383,22 @@ public class StatisticsServiceImpl implements StatisticsService {
             if (charge == null) {
                 charge = BigDecimal.ZERO;
             }
-            dataList.add(new StatisticsVo03(dateTime, income, disburse, consume, charge));
+            BigDecimal signs = dataMap5.get(dateTime);
+            if (signs == null) {
+                signs = BigDecimal.ZERO;
+            }
+            dataList.add(new StatisticsVo03(dateTime, income, disburse, consume, charge ,signs));
             // 当日
             if (now == i) {
-                today = new StatisticsVo03(dateTime, income, disburse, consume, charge).setLabel("今日汇总");
+                today = new StatisticsVo03(dateTime, income, disburse, consume, charge,signs).setLabel("今日汇总");
             }
             // 汇总
             total.setIncome(total.getIncome().add(income));
             total.setDisburse(total.getDisburse().add(disburse));
             total.setConsume(total.getConsume().add(consume));
             total.setCharge(total.getCharge().add(charge));
-            total.setTotal(total.getTotal().add(consume).add(charge));
+            total.setSign(total.getSign().add(signs));
+            total.setTotal(total.getTotal().add(consume).add(charge).subtract(signs));
         }
         dataList.add(total);
         dataList.add(0, total);

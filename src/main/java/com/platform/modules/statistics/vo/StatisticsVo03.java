@@ -35,17 +35,22 @@ public class StatisticsVo03 {
      */
     private BigDecimal charge = BigDecimal.ZERO;
     /**
+     * 签到
+     */
+    private BigDecimal sign = BigDecimal.ZERO;
+    /**
      * 统计
      */
     private BigDecimal total = BigDecimal.ZERO;
 
-    public StatisticsVo03(Date createTime, BigDecimal income, BigDecimal disburse, BigDecimal consume, BigDecimal charge) {
+    public StatisticsVo03(Date createTime, BigDecimal income, BigDecimal disburse, BigDecimal consume, BigDecimal charge,BigDecimal sign) {
         this.label = DateUtil.format(createTime, DatePattern.NORM_DATE_FORMAT);
         this.income = income;
         this.disburse = disburse;
         this.consume = consume;
         this.charge = charge;
-        this.total = consume.add(charge);
+        this.sign = sign;
+        this.total = consume.add(charge).subtract(sign == null ? BigDecimal.ZERO : sign);
     }
 
 }

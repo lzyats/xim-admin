@@ -127,6 +127,11 @@ public interface ChatUserService extends BaseService<ChatUser> {
     void resetSpecial(Long userId, YesOrNoEnum special);
 
     /**
+     * 重置特殊
+     */
+    void resetIsvip(Long userId, int special);
+
+    /**
      * 认证状态
      */
     String getAuthLabel(ApproveEnum auth);

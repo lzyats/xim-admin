@@ -1,9 +1,13 @@
 package com.platform.modules.chat.service.impl;
 
+import com.platform.common.constant.AppConstants;
+import com.platform.common.redis.RedisUtils;
 import com.platform.common.web.service.impl.BaseServiceImpl;
 import com.platform.modules.chat.dao.ChatVersionDao;
 import com.platform.modules.chat.domain.ChatVersion;
 import com.platform.modules.chat.service.ChatVersionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +26,11 @@ public class ChatVersionServiceImpl extends BaseServiceImpl<ChatVersion> impleme
     private ChatVersionDao chatVersionDao;
 
     @Autowired
+    private RedisUtils redisUtils;
+
+    private static final Logger logger = LoggerFactory.getLogger(ChatNoticeServiceImpl.class);
+
+    @Autowired
     public void setBaseDao() {
         super.setBaseDao(chatVersionDao);
     }
@@ -34,6 +43,12 @@ public class ChatVersionServiceImpl extends BaseServiceImpl<ChatVersion> impleme
 
     @Override
     public void editVersion(ChatVersion chatVersion) {
+        String redisKey = AppConstants.REDIS_COMMON_CONFIG + "version:upgrade:android";
+        redisUtils.delete(redisKey);
+        logger.info("清除缓存：key {}",redisKey);
+        redisKey = AppConstants.REDIS_COMMON_CONFIG + "version:upgrade:ios";
+        redisUtils.delete(redisKey);
+        logger.info("清除缓存：key {}",redisKey);
         chatVersion.setDevice(null);
         this.updateById(chatVersion);
     }

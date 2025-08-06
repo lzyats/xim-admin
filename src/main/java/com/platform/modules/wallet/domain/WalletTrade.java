@@ -145,10 +145,12 @@ public class WalletTrade extends BaseEntity {
     public static final String LABEL_TRADE_TYPE = "tradeType";
     public static final String LABEL_TRADE_TYPE_LABEL = "tradeTypeLabel";
     public static final String LABEL_TRADE_AMOUNT = "tradeAmount";
+    public static final String LABEL_TRADE_BALANCE = "tradeBalance";
     public static final String LABEL_PORTRAIT = "portrait";
     public static final String LABEL_NICKNAME = "nickname";
     public static final String LABEL_USER_ID = "userId";
     public static final String LABEL_USER_NO = "userNo";
+    public static final String LABEL_SOURCE_ID= "sourceId";
     public static final String LABEL_PHONE = "phone";
     public static final String LABEL_RECEIVE_NAME = "receiveName";
     public static final String LABEL_RECEIVE_NO = "receiveNo";

@@ -6,7 +6,7 @@
     <sql id="baseSql">
         select user_id, phone, user_no, email, nickname, portrait, remark, gender, birthday, intro, province, city, salt, password,
         pass, banned, special, abnormal, payment, privacy_no, privacy_phone, privacy_scan, privacy_card, privacy_group,
-        ip, ip_addr, login_wx, login_ios, login_qq, on_line, create_time from chat_user
+        ip, ip_addr, login_wx, login_ios, login_qq, on_line, create_time ,isvip ,user_dep ,user_level ,parent_id from chat_user
     </sql>
 
     <!-- 查询列表字段 -->
@@ -19,7 +19,7 @@
 
     <!-- 字段集 -->
     <sql id="leftSql">
-        select a.user_id, a.phone, a.user_no, a.email, a.nickname, a.portrait, a.remark, a.create_time, a.on_line, a.auth, a.special, a.abnormal, a.banned, a.ip, a.ip_addr, a.deleted
+        select a.user_id, a.phone, a.user_no, a.email, a.nickname, a.portrait, a.remark, a.create_time, a.on_line, a.auth, a.special, a.abnormal, a.banned, a.ip, a.ip_addr, a.deleted ,a.isvip ,a.user_dep ,a.user_level ,a.parent_id
     </sql>
 
     <select id="queryDataList" resultType="com.platform.modules.chat.domain.ChatUser">

@@ -45,6 +45,8 @@ import com.platform.modules.wallet.domain.WalletInfo;
 import com.platform.modules.wallet.service.WalletInfoService;
 import com.platform.modules.ws.service.HookService;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,6 +106,8 @@ public class ChatUserServiceImpl extends BaseServiceImpl<ChatUser> implements Ch
     @Resource
     private ChatRobotService chatRobotService;
 
+    private static final Logger logger = LoggerFactory.getLogger(ChatNoticeServiceImpl.class);
+
     @Autowired
     public void setBaseDao() {
         super.setBaseDao(chatUserDao);
@@ -119,6 +123,7 @@ public class ChatUserServiceImpl extends BaseServiceImpl<ChatUser> implements Ch
     public PageInfo queryDataList(ChatUser chatUser) {
         // 查询
         List<ChatUser> dataList = chatUserDao.queryDataList(chatUser);
+        logger.info("原始查询结果: {}", dataList);
         // 统计
         QueryWrapper<ChatUserInfo> wrapper = new QueryWrapper<>();
         wrapper.select("id_card AS label, COUNT(id_card) as count");
@@ -132,6 +137,7 @@ public class ChatUserServiceImpl extends BaseServiceImpl<ChatUser> implements Ch
         List<Dict> dictList = dataList.stream().collect(ArrayList::new, (x, y) -> {
             x.add(format(y, dataMap));
         }, ArrayList::addAll);
+        logger.info("二次查询结果: {}", dictList);
         return getPageInfo(dictList, dataList);
     }
 
@@ -179,6 +185,10 @@ public class ChatUserServiceImpl extends BaseServiceImpl<ChatUser> implements Ch
                         , ChatUser.LABEL_IP_ADDR
                         , ChatUser.LABEL_EMAIL
                         , ChatUser.LABEL_BALANCE
+                        , ChatUser.LABEL_ISVIP
+                        , ChatUser.LABEL_USER_DEP
+                        , ChatUser.LABEL_USER_LEVEL
+                        , ChatUser.LABEL_PARENT_ID
                 )
                 .set(ChatUser.LABEL_AUTH_LABEL, getAuthLabel(chatUser.getAuth()))
                 .set(ChatUser.LABEL_BANNED_LABEL, YesOrNoEnum.transform(chatUser.getBanned()) ? "封禁" : "正常")
@@ -717,6 +727,13 @@ public class ChatUserServiceImpl extends BaseServiceImpl<ChatUser> implements Ch
     public void resetSpecial(Long userId, YesOrNoEnum special) {
         // 更新
         this.updateById(new ChatUser().setUserId(userId).setSpecial(special));
+    }
+
+    @Transactional
+    @Override
+    public void resetIsvip(Long userId, int special) {
+        // 更新
+        this.updateById(new ChatUser().setUserId(userId).setIsvip(special));
     }
 
     /**

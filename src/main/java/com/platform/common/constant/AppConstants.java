@@ -85,4 +85,8 @@ public class AppConstants {
      */
     public static final String REDIS_CHAT_WALLET = "chat:wallet:{}:{}";
 
+    // 添加缓存清除
+    public static final String REDIS_WALLET_ROBOT = "wallet:cash";
+    public static final String REDIS_COMMON_CONFIG= "common:config";
+
 }

@@ -62,6 +62,15 @@ public class OperateVo04 {
     @JsonDeserialize(using = JsonDecimalDeserializer.class)
     private BigDecimal rate;
     /**
+     * 提现汇率
+     */
+    @Digits(integer = 8, fraction = 2, message = "提现利率格式不正确")
+    @DecimalMin(value = "0.00", message = "提现利率不能小于0.00%")
+    @DecimalMax(value = "100.00", message = "提现利率不能大于100.00%")
+    @NotNull(message = "提现汇率不能为空")
+    @JsonDeserialize(using = JsonDecimalDeserializer.class)
+    private BigDecimal rates;
+    /**
      * 提现说明
      */
     @NotBlank(message = "提现说明不能为空")

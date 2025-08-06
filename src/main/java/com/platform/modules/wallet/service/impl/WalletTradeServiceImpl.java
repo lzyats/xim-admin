@@ -95,6 +95,7 @@ public class WalletTradeServiceImpl extends BaseServiceImpl<WalletTrade> impleme
                             , WalletTrade.LABEL_TRADE_TYPE
                             , WalletTrade.LABEL_TRADE_TYPE_LABEL
                             , WalletTrade.LABEL_TRADE_AMOUNT
+                            , WalletTrade.LABEL_TRADE_BALANCE
                             , WalletTrade.LABEL_CREATE_TIME
                     )
                     .set(WalletTrade.LABEL_TRADE_TYPE_LABEL, y.getTradeType().getInfo());
@@ -221,7 +222,12 @@ public class WalletTradeServiceImpl extends BaseServiceImpl<WalletTrade> impleme
         // 查询
         QueryWrapper<WalletTrade> wrapper = new QueryWrapper<>();
         wrapper.eq(WalletTrade.COLUMN_TRADE_TYPE, tradeType);
-        wrapper.lt(WalletTrade.COLUMN_TRADE_AMOUNT, BigDecimal.ZERO);
+        if (TradeTypeEnum.SIGN.equals(tradeType)) {
+            wrapper.gt(WalletTrade.COLUMN_TRADE_AMOUNT, BigDecimal.ZERO);
+        }else {
+            wrapper.lt(WalletTrade.COLUMN_TRADE_AMOUNT, BigDecimal.ZERO);
+        }
+
         if (!StringUtils.isEmpty(phone)) {
             wrapper.eq(WalletTrade.COLUMN_PHONE, phone);
         }
@@ -284,6 +290,7 @@ public class WalletTradeServiceImpl extends BaseServiceImpl<WalletTrade> impleme
                 .filter(WalletTrade.LABEL_TRADE_ID
                         , WalletTrade.LABEL_USER_ID
                         , WalletTrade.LABEL_USER_NO
+                        , WalletTrade.LABEL_SOURCE_ID
                         , WalletTrade.LABEL_PHONE
                         , WalletTrade.LABEL_NICKNAME
                         , WalletTrade.LABEL_CREATE_TIME

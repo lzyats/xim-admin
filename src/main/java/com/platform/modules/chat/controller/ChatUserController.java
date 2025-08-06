@@ -251,6 +251,17 @@ public class ChatUserController extends BaseController {
     }
 
     /**
+     * 内部账号用户
+     */
+    @RequiresPermissions(value = {"chat:user:edit"})
+    @PostMapping(value = "/isvip")
+    @SubmitRepeat
+    public AjaxResult isvip(@RequestBody ChatUser chatUser) {
+        chatUserService.resetIsvip(chatUser.getUserId(), chatUser.getIsvip());
+        return AjaxResult.success();
+    }
+
+    /**
      * 注销
      */
     @RequiresPermissions(value = {"chat:user:deleted"})
