@@ -58,6 +58,8 @@ public class OperateConfigServiceImpl implements OperateConfigService {
                 .setSigntoal(configMap.get(ChatConfigEnum.SYS_SIGNTOAL).getYesOrNo())
                 .setSign(configMap.get(ChatConfigEnum.SYS_SIGN).getBigDecimal())
                 .setInvo(configMap.get(ChatConfigEnum.SYS_INVO).getBigDecimal())
+                .setInvoadus(configMap.get(ChatConfigEnum.SYS_INVOADUS).getYesOrNo())
+                .setSendmoment(configMap.get(ChatConfigEnum.SYS_SENDMOMENT).getYesOrNo())
                 ;
     }
 
@@ -103,6 +105,10 @@ public class OperateConfigServiceImpl implements OperateConfigService {
         chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_SIGN).setValue(operateVo.getSign()));
         // 更新
         chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_INVO).setValue(operateVo.getInvo()));
+        // 更新
+        chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_INVOADUS).setValue(operateVo.getInvoadus()));
+        // 更新
+        chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_SENDMOMENT).setValue(operateVo.getSendmoment()));
         //清除缓存
         String redisKey = AppConstants.REDIS_COMMON_CONFIG; // 假设配置缓存KEY
         redisUtils.delete(redisKey);

@@ -75,6 +75,14 @@ public enum ChatConfigEnum {
      */
     SYS_SIGNTOAL("sys_signtoal"),
     /**
+     * 是否添加邀请人
+     */
+    SYS_INVOADUS("sys_invoadus"),
+    /**
+     * 注册后是补发朋友圈
+     */
+    SYS_SENDMOMENT("sys_sendmoment"),
+    /**
      * 签到奖励
      */
     SYS_SIGN("sys_sign"),

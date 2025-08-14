@@ -1,11 +1,11 @@
 package com.platform.modules.friend.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
+
 import com.platform.common.web.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -54,6 +54,18 @@ public class FriendMoments extends BaseEntity {
      * 逻辑删除标记
      */
     private Integer isDeleted;
+
+    /** 用户头像，改为可选类型 */
+    @TableField(exist = false)
+    private String portrait;
+
+    /** 用户昵称，改为可选类型 */
+    @TableField(exist = false)
+    private String nickname;
+
+    /** 用户昵称，改为可选类型 */
+    @TableField(exist = false)
+    private String userNo;
 
     public FriendMoments(Long momentId) {
         this.momentId = momentId;

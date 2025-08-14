@@ -113,6 +113,12 @@ public class OperateVo06 {
     @DecimalMax(value = "999999.00", message = "推荐奖励不能大于999999.00")
     @NotNull(message = "推荐奖励不能为空")
     private BigDecimal invo;
+
+    /**
+     * 推荐加好友开关
+     */
+    @NotNull(message = " 推荐加好友开关")
+    private YesOrNoEnum invoadus;
     /**
      * 签到奖励
      */
@@ -123,9 +129,15 @@ public class OperateVo06 {
     private BigDecimal sign;
 
     /**
-     * 用户短信开关
+     * 用户签到开关
      */
     @NotNull(message = " 签到奖励开关不能为空")
     private YesOrNoEnum signtoal;
+
+    /**
+     * 补发朋友圈开关
+     */
+    @NotNull(message = " 补发朋友圈开关不能为空")
+    private YesOrNoEnum sendmoment;
 
 }

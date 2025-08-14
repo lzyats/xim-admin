@@ -39,8 +39,7 @@ public class FriendMomentsController extends BaseController {
     public TableDataInfo list(FriendMoments friendMoments) {
         startPage("createTime desc");
 
-        List<FriendMoments> list = friendMomentsService.queryList(friendMoments);
-        return getDataTable(list);
+        return getDataTable(friendMomentsService.queryLists(friendMoments));
     }
 
     /**

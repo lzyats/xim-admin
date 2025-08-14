@@ -4,7 +4,10 @@ import com.platform.modules.friend.domain.FriendComments;
 import com.platform.common.web.service.BaseService;
 import cn.hutool.core.lang.Dict;
 import com.github.pagehelper.PageInfo;
+import com.platform.modules.friend.domain.FriendMoments;
 import com.platform.modules.friend.vo.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,6 +20,8 @@ public interface FriendCommentsService extends BaseService<FriendComments> {
      * 列表
      */
     PageInfo queryListall(Long momentId);
+
+
 
     /**
      * 新增
