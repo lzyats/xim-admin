@@ -75,6 +75,15 @@ public class ChatUserController extends BaseController {
     }
 
     /**
+     * 列表数据
+     */
+    @RequiresPermissions(value = {"chat:user:list"})
+    @GetMapping(value = "/listall")
+    public TableDataInfo listall() {
+        return getDataTable(chatUserService.queryDataListall());
+    }
+
+    /**
      * 详细信息
      */
     @RequiresPermissions(value = {"chat:user:query"})

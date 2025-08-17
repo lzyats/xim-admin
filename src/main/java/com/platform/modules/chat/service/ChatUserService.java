@@ -22,6 +22,11 @@ public interface ChatUserService extends BaseService<ChatUser> {
     PageInfo queryDataList(ChatUser chatUser);
 
     /**
+     * 列表
+     */
+    PageInfo queryDataListall();
+
+    /**
      * 详情
      */
     Dict getInfo(Long userId);

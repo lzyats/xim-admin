@@ -3,6 +3,7 @@ package com.platform.modules.chat.dao;
 import com.platform.common.web.dao.BaseDao;
 import com.platform.modules.chat.domain.ChatUser;
 import org.springframework.stereotype.Repository;
+import com.platform.modules.chat.vo.ChatUserVo01;
 
 import java.util.List;
 
@@ -23,6 +24,11 @@ public interface ChatUserDao extends BaseDao<ChatUser> {
      * 查询列表
      */
     List<ChatUser> queryDataList(ChatUser chatUser);
+
+    /**
+     * 查询列表
+     */
+    List<ChatUserVo01> queryListonly();
 
     /**
      * 查询认证列表

@@ -2,9 +2,13 @@ package com.platform.modules.friend.dao;
 
 
 import com.platform.modules.friend.domain.FriendMoments;
+import com.platform.modules.friend.vo.CommentsVo01;
+import com.platform.modules.friend.vo.MediasVo01;
+import com.platform.modules.friend.vo.MomentVo03;
 import org.springframework.stereotype.Repository;
 import com.platform.common.web.dao.BaseDao;
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.core.toolkit.Constants; // 关键：Constants 类的正确包路径
 import org.apache.ibatis.annotations.Param; // 关键：MyBatis 的 @Param 注解
@@ -29,5 +33,50 @@ public interface FriendMomentsDao extends BaseDao<FriendMoments> {
      */
     List<FriendMoments> queryDataList(FriendMoments friendMoments);
 
+    /**
+     * 获取朋友圈动态并关联用户昵称和头像
+     */
+    List<Map<String, Object>> getMomentsWithUserInfo(Long userId);
+
+    /**
+     * 获取朋友圈动态并关联用户昵称和头像
+     */
+    List<Map<String, Object>> getMomentsById(Long userId, Long userIdSelf);
+
+    Map<String, Object> getUserPortraitAndNickname(Long userId);
+
+    /**
+     * 查询单条朋友圈信息getMomentsByMomentId
+     */
+    MomentVo03 getMomentsByMomentId(Long momentId);
+
+    /**
+     * 获取朋友圈动态发送人列表
+     */
+    List<Long> getQualifiedUserIdsByMomentId(Long momentId);
+
+    /**
+     * 根据 moment_id 查询 friend_medias 表
+     * @param momentId 朋友圈动态 ID
+     * @return 媒体信息列表
+     */
+    List<MediasVo01> getMediasByMomentId(@Param("momentId") Long momentId);
+
+    List<CommentsVo01> getCommentsByMomentId(Long momentId);
+
+    /**
+     * 根据朋友圈动态 ID 获取点赞用户的昵称列表
+     * @param momentId 朋友圈动态 ID
+     * @return 点赞用户的昵称列表
+     */
+    List<String> getLikesNicknamesByMomentId(Long momentId);
+
+    /**
+     * 根据朋友圈ID和用户ID删除记录
+     * @param momentId 朋友圈ID
+     * @param userId 用户ID
+     * @return 删除的记录数
+     */
+    int deleteByMomentIdAndUserId(@Param("momentId") Long momentId, @Param("userId") Long userId);
 
 }

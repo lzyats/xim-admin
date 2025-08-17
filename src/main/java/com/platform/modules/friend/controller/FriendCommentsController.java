@@ -8,7 +8,9 @@ import com.platform.common.aspectj.AppLog;
 import com.platform.common.enums.LogTypeEnum;
 import com.platform.common.web.page.TableDataInfo;
 import com.platform.common.web.domain.AjaxResult;
+import com.platform.modules.friend.service.impl.FriendMomentsServiceImpl;
 import com.platform.modules.friend.vo.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import com.platform.modules.friend.service.FriendCommentsService;
 import com.platform.modules.friend.domain.FriendComments;
@@ -23,6 +25,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
  * 朋友圈评论表 控制层
  * </p>
  */
+@Slf4j
 @RestController
 @RequestMapping("/friend/comments")
 public class FriendCommentsController extends BaseController {
@@ -31,6 +34,9 @@ public class FriendCommentsController extends BaseController {
 
     @Resource
     private FriendCommentsService friendCommentsService;
+
+    @Resource
+    private FriendMomentsServiceImpl friendMomentsServiceimpl;
 
     /**
      * 列表数据 TODO
@@ -93,9 +99,14 @@ public class FriendCommentsController extends BaseController {
      */
     @RequiresPermissions(value = {"friend:comments:remove"})
     @AppLog(value = title, type = LogTypeEnum.DELETE)
-    @GetMapping("/delete/{id}")
-    public AjaxResult delete(@PathVariable Long id) {
-        friendCommentsService.deleteById(id);
+    @GetMapping("/delete/{commentId}/{momentId}")
+    public AjaxResult delete(
+            @PathVariable Long commentId,
+            @PathVariable Long momentId) {
+        //log.info("接收参数：commentId {} momentId {}",commentId,momentId);
+        friendCommentsService.deleteById(commentId);
+        // 发送广播
+        friendMomentsServiceimpl.getmoments(momentId);
         return AjaxResult.successMsg("删除成功");
     }
 

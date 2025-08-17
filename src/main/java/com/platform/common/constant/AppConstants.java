@@ -89,4 +89,6 @@ public class AppConstants {
     public static final String REDIS_WALLET_ROBOT = "wallet:cash";
     public static final String REDIS_COMMON_CONFIG= "common:config";
 
+    public static final String REDIS_USER_LISTALL= "user:listall";
+
 }

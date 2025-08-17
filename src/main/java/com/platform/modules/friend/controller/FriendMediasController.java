@@ -13,6 +13,7 @@ import com.platform.common.exception.BaseException;
 import com.platform.common.web.page.TableDataInfo;
 import com.platform.common.web.domain.AjaxResult;
 import com.platform.modules.friend.domain.FriendMoments;
+import com.platform.modules.friend.service.impl.FriendMomentsServiceImpl;
 import org.springframework.web.bind.annotation.*;
 import com.platform.modules.friend.service.FriendMediasService;
 import com.platform.modules.friend.domain.FriendMedias;
@@ -34,6 +35,9 @@ public class FriendMediasController extends BaseController {
 
     @Resource
     private FriendMediasService friendMediasService;
+
+    @Resource
+    FriendMomentsServiceImpl friendMomentsServiceimpl;
 
     /**
      * 列表数据 TODO
@@ -77,6 +81,8 @@ public class FriendMediasController extends BaseController {
     @PostMapping("/add")
     public AjaxResult add(@Validated @RequestBody FriendVo04 friendVo04) {
         friendMediasService.addmedia(friendVo04);
+        // 发送广播
+        friendMomentsServiceimpl.getmoments(friendVo04.getMomentId());
         return AjaxResult.successMsg("新增成功");
     }
 
@@ -88,8 +94,10 @@ public class FriendMediasController extends BaseController {
     @PostMapping("/edit")
     public AjaxResult edit(@Validated @RequestBody FriendMedias friendMedias) {
         // 输出字符串（多个字符，使用双引号）
-        System.out.println("Hello, World!"); // 输出字符串并换行
+        //System.out.println("Hello, World!"); // 输出字符串并换行
         friendMediasService.updateById(friendMedias);
+        // 发送广播
+        friendMomentsServiceimpl.getmoments(friendMedias.getMomentId());
         return AjaxResult.successMsg("修改成功");
     }
 
@@ -98,9 +106,11 @@ public class FriendMediasController extends BaseController {
      */
     @RequiresPermissions(value = {"friend:medias:remove"})
     @AppLog(value = title, type = LogTypeEnum.DELETE)
-    @GetMapping("/delete/{id}")
-    public AjaxResult delete(@PathVariable Long id) {
+    @GetMapping("/delete/{id}/{id1}")
+    public AjaxResult delete(@PathVariable Long id,@PathVariable Long id1) {
         friendMediasService.deleteById(id);
+        // 发送广播
+        friendMomentsServiceimpl.getmoments(id1);
         return AjaxResult.successMsg("删除成功");
     }
 

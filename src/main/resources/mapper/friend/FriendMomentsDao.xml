@@ -33,6 +33,14 @@
                 and fm.user_id = #{userId}
             </if>
 
+            <if test="isDeleted != null ">
+                and fm.is_deleted = #{isDeleted}
+            </if>
+
+            <if test="nickname != null and nickname != ''">
+                and cu.nickname = #{nickname}
+            </if>
+
             <!--
             <if test="content != null and content != ''">
                 and content = #{content}
@@ -59,11 +67,216 @@
             </if>
             -->
 
-            <if test="isDeleted != null and isDeleted != ''">
-                and fm.is_deleted = #{isDeleted}
-            </if>
+
 
         </where>
     </select>
+    <!-- 获取朋友圈动态并关联用户昵称和头像 -->
+    <select id="getMomentsWithUserInfo" resultType="java.util.Map">
+        <include refid="baseSql"/>
+        <where>
+            (
+            -- 原条件：广场可见（0）、自己发布的内容、好友发布的内容（visibility=1）
+            fm.visibility = 0
+            or fm.user_id = #{userId}
+            or (
+            fm.visibility = 1
+            and fm.user_id != #{userId}
+            and fm.user_id in (
+            select cf.current_id
+            from chat_friend cf
+            where cf.user_id = #{userId}
+            )
+            )
+            -- 新增条件1：visibility=3 且 userId在visuser字段中（格式：userA,userB...）
+            or (
+            fm.visibility = 3
+            and concat(',', fm.visuser, ',') like concat('%,', #{userId}, ',%')
+            )
+            -- 新增条件2：visibility=4 且 userId不在visuser字段中
+            or (
+            fm.visibility = 4
+            and (
+            fm.visuser is null
+            or concat(',', fm.visuser, ',') not like concat('%,', #{userId}, ',%')
+            )
+            )
+            )
+        </where>
+        ORDER BY fm.create_time DESC
+    </select>
 
+    <select id="getMediasByMomentId" resultType="com.platform.modules.friend.vo.MediasVo01">
+        SELECT type, url, thumbnail
+        FROM friend_medias
+        WHERE moment_id = #{momentId}
+    </select>
+
+    <select id="getCommentsByMomentId" resultType="com.platform.modules.friend.vo.CommentsVo01">
+        SELECT CASE WHEN fc.source = 1 THEN true ELSE false END AS source,
+               cu1.nickname                                     AS from_user,
+               cu2.nickname                                     AS to_user,
+               fc.content
+        FROM friend_comments fc
+                 LEFT JOIN chat_user cu1 ON fc.user_id = cu1.user_id
+                 LEFT JOIN chat_user cu2 ON fc.reply_to = cu2.user_id
+        WHERE fc.moment_id = #{momentId}
+    </select>
+
+    <select id="getLikesNicknamesByMomentId" resultType="java.lang.String">
+        SELECT chat_user.nickname
+        FROM friend_likes
+                 JOIN chat_user ON chat_user.user_id = friend_likes.user_id
+        WHERE friend_likes.moment_id = #{momentId}
+    </select>
+
+    <!-- 新增查询：根据userId查询存在媒体的朋友圈动态 -->
+    <!-- 升级查询：根据userId和userIdSelf查询存在媒体的朋友圈动态 -->
+    <select id="getMomentsById" resultType="java.util.Map">
+        <include refid="baseSql"/>
+        INNER JOIN (SELECT DISTINCT moment_id FROM friend_medias) fm2
+        ON fm.moment_id = fm2.moment_id
+        <where>
+            <!-- 基础条件：必须匹配目标用户ID -->
+            fm.user_id = #{userId}
+
+            <!-- 情况1：查询自己的动态（userId等于userIdSelf），无需额外条件 -->
+            <if test="userId == userIdSelf">
+                <!-- 自己的动态全部返回 -->
+            </if>
+
+            <!-- 情况2：查询他人的动态（userId不等于userIdSelf），按visibility字段判断 -->
+            <if test="userId != userIdSelf">
+                <!-- 关键修复：添加AND连接基础条件和后续条件块 -->
+                AND (
+                -- 2.1：visibility=0（公开）
+                fm.visibility = 0
+                OR
+                -- 2.2：visibility=1（好友可见），需判断好友关系
+                (
+                fm.visibility = 1
+                AND EXISTS (
+                SELECT 1 FROM chat_friend
+                WHERE chat_friend.user_id = fm.user_id
+                AND chat_friend.current_id = #{userIdSelf}
+                )
+                )
+                OR
+                -- 2.3：visibility=3（部分可见），检查JSON包含
+                (
+                fm.visibility = 3
+                AND JSON_CONTAINS(fm.visuser, CONCAT('"', #{userIdSelf}, '"'), '$')
+                )
+                OR
+                -- 2.4：visibility=4（不给谁看），检查JSON不包含
+                (
+                fm.visibility = 4
+                AND NOT JSON_CONTAINS(fm.visuser, CONCAT('"', #{userIdSelf}, '"'), '$')
+                )
+                )
+            </if>
+        </where>
+        ORDER BY fm.create_time DESC
+    </select>
+
+    <!-- 新增查询：根据momentId查询朋友圈动态 -->
+    <resultMap id="MomentVo03Map" type="com.platform.modules.friend.vo.MomentVo03">
+        <!-- 动态ID（对应数据库moment_id） -->
+        <id column="moment_id" property="momentId" jdbcType="BIGINT"/>
+
+        <!-- 用户ID（对应数据库user_id） -->
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+
+        <!-- 动态正文（对应数据库content） -->
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+        <result column="portrait" property="portrait" jdbcType="VARCHAR"/>
+
+        <!-- 位置信息（对应数据库location） -->
+        <result column="location" property="location" jdbcType="VARCHAR"/>
+
+        <!-- 发布时间（类中为Date类型，使用DateTypeHandler） -->
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"
+                typeHandler="org.apache.ibatis.type.DateTypeHandler"/>
+
+        <!-- 可见人群（对应数据库visibility，类中为int类型） -->
+        <result column="visibility" property="visibility" jdbcType="TINYINT"/>
+
+        <!-- 可见人列表（JSON转换） -->
+        <result column="visuser" property="visuser"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+    </resultMap>
+    <!-- 查询语句使用 resultMap -->
+    <select id="getMomentsByMomentId" resultMap="MomentVo03Map">
+        <include refid="baseSql"/>  <!-- 使用baseSql包含关联表查询 -->
+        <where>
+            fm.moment_id = #{momentId}  <!-- 注意加表别名fm -->
+        </where>
+    </select>
+
+    <!-- 根据moment_id查询符合条件的user_id列表（兼容MySQL 5.7） -->
+    <select id="getQualifiedUserIdsByMomentId" resultType="java.lang.Long">
+        SELECT user_id FROM (
+        <!-- 情况1：visibility为0时，返回所有用户ID -->
+        SELECT cu.user_id
+        FROM chat_user cu,
+        (SELECT visibility, user_id AS moment_user_id, visuser
+        FROM friend_moments
+        WHERE moment_id = #{momentId}) mi
+        WHERE mi.visibility = 0
+
+        UNION
+
+        <!-- 情况2：visibility为1时，返回当前用户的所有好友ID -->
+        SELECT cf.user_id
+        FROM chat_friend cf,
+        (SELECT visibility, user_id AS moment_user_id, visuser
+        FROM friend_moments
+        WHERE moment_id = #{momentId}) mi
+        WHERE mi.visibility = 1
+        AND cf.current_id = mi.moment_user_id
+
+        UNION
+
+        <!-- 情况3：visibility为2时，仅返回发布者自己的ID -->
+        SELECT mi.moment_user_id
+        FROM (SELECT visibility, user_id AS moment_user_id, visuser
+        FROM friend_moments
+        WHERE moment_id = #{momentId}) mi
+        WHERE mi.visibility = 2
+
+        UNION
+
+        <!-- 情况5：visibility为4时，返回不在visuser中的好友ID -->
+        SELECT cf.user_id
+        FROM chat_friend cf,
+        (SELECT visibility, user_id AS moment_user_id, visuser
+        FROM friend_moments
+        WHERE moment_id = #{momentId}) mi
+        WHERE mi.visibility = 4
+        AND cf.current_id = mi.moment_user_id
+        AND NOT JSON_CONTAINS(mi.visuser, CONCAT('"', cf.user_id, '"'), '$')
+        ) AS user_ids  <!-- 确保此处有闭合的括号和别名 -->
+    </select>
+
+    <!-- 根据user_id查询用户头像和昵称 -->
+    <select id="getUserPortraitAndNickname" resultType="java.util.Map">
+        SELECT
+            portrait,
+            nickname
+        FROM
+            chat_user
+        WHERE
+            user_id = #{userId}
+    </select>
+    <!-- 根据momentid和userid删除指定信息 -->
+    <!-- 将删除操作改为更新is_deleted字段为1（逻辑删除） -->
+    <update id="deleteByMomentIdAndUserId">
+        UPDATE friend_moments
+        SET is_deleted = 1,
+        update_time = NOW()  <!-- 可选：更新操作时间，需表中有update_time字段 -->
+        WHERE moment_id = #{momentId}
+        AND user_id = #{userId}
+        <!-- 确保只更新未被删除的记录 -->
+    </update>
 </mapper>

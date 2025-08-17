@@ -8,7 +8,11 @@ import com.platform.common.aspectj.AppLog;
 import com.platform.common.enums.LogTypeEnum;
 import com.platform.common.web.page.TableDataInfo;
 import com.platform.common.web.domain.AjaxResult;
+import com.platform.modules.friend.dao.FriendMomentsDao;
+import com.platform.modules.friend.service.impl.FriendMomentsServiceImpl;
 import com.platform.modules.friend.vo.FriendVo02;
+import com.platform.modules.friend.vo.MomentVo03;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import com.platform.modules.friend.service.FriendMomentsService;
 import com.platform.modules.friend.domain.FriendMoments;
@@ -22,6 +26,7 @@ import com.platform.modules.friend.vo.FriendVo01;
  * 朋友圈动态表 控制层
  * </p>
  */
+@Slf4j
 @RestController
 @RequestMapping("/friend/moments")
 public class FriendMomentsController extends BaseController {
@@ -30,6 +35,12 @@ public class FriendMomentsController extends BaseController {
 
     @Resource
     private FriendMomentsService friendMomentsService;
+
+    @Resource
+    private FriendMomentsDao friendMomentsDao;
+
+    @Resource
+    private FriendMomentsServiceImpl friendMomentsServiceimpl;
 
     /**
      * 列表数据 TODO
@@ -48,7 +59,9 @@ public class FriendMomentsController extends BaseController {
     @RequiresPermissions(value = {"friend:moments:query"})
     @GetMapping("/info/{momentId}")
     public AjaxResult getInfo(@PathVariable Long momentId) {
-        return AjaxResult.success(friendMomentsService.getById(momentId));
+        MomentVo03 info= friendMomentsDao.getMomentsByMomentId(momentId);
+        log.info("查询值：{}",info);
+        return AjaxResult.success(info);
     }
 
     /**
@@ -80,8 +93,10 @@ public class FriendMomentsController extends BaseController {
      */
     @RequiresPermissions(value = {"friend:moments:remove"})
     @AppLog(value = title, type = LogTypeEnum.DELETE)
-    @GetMapping("/delete/{id}")
+    @GetMapping("/deleted/{id}")
     public AjaxResult delete(@PathVariable Long id) {
+        // 发送广播 先广播，不然删除了没有任何记录了
+        friendMomentsServiceimpl.getmoments(id,1);
         friendMomentsService.deleteById(id);
         return AjaxResult.successMsg("删除成功");
     }
@@ -96,8 +111,6 @@ public class FriendMomentsController extends BaseController {
         friendMomentsService.deleteByIds(ids);
         return AjaxResult.successMsg("删除成功");
     }
-
-
-
+    
 }
 

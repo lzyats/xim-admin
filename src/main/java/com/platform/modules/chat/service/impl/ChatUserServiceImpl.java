@@ -18,20 +18,19 @@ import com.platform.common.enums.ApproveEnum;
 import com.platform.common.enums.GenderEnum;
 import com.platform.common.enums.YesOrNoEnum;
 import com.platform.common.exception.BaseException;
+import com.platform.common.redis.RedisJsonUtil;
 import com.platform.common.redis.RedisUtils;
 import com.platform.common.utils.CodeUtils;
 import com.platform.common.web.page.PageDomain;
 import com.platform.common.web.page.TableSupport;
 import com.platform.common.web.service.impl.BaseServiceImpl;
 import com.platform.modules.chat.dao.ChatUserDao;
-import com.platform.modules.chat.domain.ChatBanned;
-import com.platform.modules.chat.domain.ChatUser;
-import com.platform.modules.chat.domain.ChatUserAppeal;
-import com.platform.modules.chat.domain.ChatUserInfo;
+import com.platform.modules.chat.domain.*;
 import com.platform.modules.chat.enums.BannedTimeEnum;
 import com.platform.modules.chat.enums.BannedTypeEnum;
 import com.platform.modules.chat.enums.UserLogEnum;
 import com.platform.modules.chat.service.*;
+import com.platform.modules.chat.vo.ChatUserVo01;
 import com.platform.modules.chat.vo.ChatVo01;
 import com.platform.modules.chat.vo.ChatVo06;
 import com.platform.modules.push.dto.PushBox;
@@ -54,6 +53,8 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -101,6 +102,9 @@ public class ChatUserServiceImpl extends BaseServiceImpl<ChatUser> implements Ch
     private ChatUserAppealService chatUserAppealService;
 
     @Resource
+    private RedisJsonUtil redisJsonUtil;
+
+    @Resource
     private HookService hookService;
 
     @Resource
@@ -139,6 +143,46 @@ public class ChatUserServiceImpl extends BaseServiceImpl<ChatUser> implements Ch
         }, ArrayList::addAll);
         logger.info("二次查询结果: {}", dictList);
         return getPageInfo(dictList, dataList);
+    }
+
+    @Override
+    public PageInfo queryDataListall() {
+        String redisKey = AppConstants.REDIS_USER_LISTALL;
+        List<ChatUserVo01> dataList;
+
+        // 1. 先从Redis查询
+        if (redisJsonUtil.hasKey(redisKey)) {
+            log.info("从缓存获取数据");
+            // 存在则获取所有列表元素（0到-1表示全量），并反序列化为List<ChatUser>
+            dataList = redisJsonUtil.range(redisKey, 0, -1, ChatUserVo01.class);
+        } else {
+            // 2. Redis不存在，从数据库查询
+            dataList = chatUserDao.queryListonly();
+            log.info("设置缓存");
+            // 3. 将数据库查询结果存入Redis（作为LIST类型，设置过期时间，如1小时）
+            // 注意：rightPushAll会将集合中每个元素作为LIST的一个元素存入（JSON序列化）
+            // 3. 关键修正：使用rightPushAll将每个ChatUser作为独立元素存入LIST
+            if (dataList != null && !dataList.isEmpty()) {
+                // 先清空可能存在的旧数据（避免残留脏数据）
+                redisJsonUtil.delete(redisKey);
+                // 循环插入每个元素
+                for (ChatUserVo01 robot : dataList) {
+                    // 此处不设置过期时间，避免重复设置，最后统一设置
+                    redisJsonUtil.leftPush(redisKey, robot, null, null);
+                }
+                // 统一设置过期时间（5分钟）
+                redisJsonUtil.expire(redisKey, 300, TimeUnit.SECONDS);
+            }
+        }
+
+        // 4. 构造不分页的PageInfo返回
+        PageInfo<ChatUserVo01> pageInfo = new PageInfo<>(dataList);
+        pageInfo.setPageNum(1);
+        pageInfo.setPageSize(dataList.size());
+        pageInfo.setTotal(dataList.size());
+        pageInfo.setPages(1);
+
+        return pageInfo;
     }
 
     @Override

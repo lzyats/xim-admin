@@ -22,7 +22,8 @@ public interface FriendMomentsService extends BaseService<FriendMoments> {
     void addMoments(FriendVo01 friendVo);
 
     /**
-     * 更新
+     * 编辑朋友圈信息
+     * @param friendVo
      */
     void editMoments(FriendVo02 friendVo);
 

@@ -3,11 +3,14 @@ package com.platform.modules.friend.domain;
 import com.baomidou.mybatisplus.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.platform.common.web.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.type.JdbcType;
 
 /**
  * <p>
@@ -66,6 +69,10 @@ public class FriendMoments extends BaseEntity {
     /** 用户昵称，改为可选类型 */
     @TableField(exist = false)
     private String userNo;
+
+    // 指定字段类型为 VARCHAR，使用 JsonTypeHandler 处理 List 与 JSON 的转换
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<String> visuser;
 
     public FriendMoments(Long momentId) {
         this.momentId = momentId;

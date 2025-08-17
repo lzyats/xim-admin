@@ -7,6 +7,7 @@ import cn.hutool.core.lang.Dict;
 import com.github.pagehelper.PageInfo;
 import com.platform.common.exception.BaseException;
 import com.platform.modules.friend.domain.FriendComments;
+import com.platform.modules.friend.service.FriendMomentsService;
 import com.platform.modules.friend.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,9 @@ public class FriendCommentsServiceImpl extends BaseServiceImpl<FriendComments> i
 
     @Resource
     private FriendCommentsDao friendCommentsDao;
+
+    @Resource
+    FriendMomentsServiceImpl friendMomentsServiceimpl;
 
     @Autowired
     public void setBaseDao() {
@@ -93,10 +97,12 @@ public class FriendCommentsServiceImpl extends BaseServiceImpl<FriendComments> i
             .setSource(source)
             .setCreateTime(now)
             .setIsDeleted(0); // 默认为未删除状态
-    
+
     try {
         // 新增评论信息
         this.add(friendComments);
+        // 发送广播
+        friendMomentsServiceimpl.getmoments(momentId);
     } catch (org.springframework.dao.DuplicateKeyException e) {
         throw new BaseException("评论ID已存在，新增失败");
     }

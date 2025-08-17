@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Data
 @Accessors(chain = true) // 链式调用
@@ -34,4 +35,6 @@ public class FriendVo01 {
     private String location;
 
     private Integer visibility;
+
+    private List<String> visuser;
 }

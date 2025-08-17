@@ -16,6 +16,17 @@
             and deleted = 0
         </where>
     </select>
+    <!-- 字段集 -->
+    <sql id="only">
+        select user_id, nickname from chat_user
+    </sql>
+    <!-- 查询列表字段 -->
+    <select id="queryListonly" resultType="com.platform.modules.chat.vo.ChatUserVo01">
+        <include refid="only"/>
+        <where>
+            and deleted = 0
+        </where>
+    </select>
 
     <!-- 字段集 -->
     <sql id="leftSql">
