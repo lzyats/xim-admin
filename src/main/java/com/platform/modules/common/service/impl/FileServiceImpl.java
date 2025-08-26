@@ -28,8 +28,8 @@ public class FileServiceImpl implements FileService {
     private TencentBuilder tencentBuilder;
 
     @Override
-    public Dict getUploadToken() {
-        return uploadService.getFileToken();
+    public Dict getUploadToken(String fileExt) {
+        return uploadService.getFileToken(fileExt);
     }
 
     @Override

@@ -92,7 +92,7 @@ public class OperateVo06 {
     /**
      * 分享页面
      */
-    @NotBlank(message = "分享页面不能为空")
+    @NotBlank(message = "分享页面下载地址不能为空")
     private String share;
     /**
      * webHook地址
@@ -139,5 +139,10 @@ public class OperateVo06 {
      */
     @NotNull(message = " 补发朋友圈开关不能为空")
     private YesOrNoEnum sendmoment;
+
+    /**
+     * 补发朋友圈开关
+     */
+    private String friends;
 
 }

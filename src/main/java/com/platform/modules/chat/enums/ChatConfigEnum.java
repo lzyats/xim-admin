@@ -31,6 +31,10 @@ public enum ChatConfigEnum {
      */
     NOTICE_CONTENT("notice_content"),
     /**
+     * 系统通告类型
+     */
+    NOTICE_NOTYPE("notice_notype"),
+    /**
      * 系统通告开关
      */
     NOTICE_STATUS("notice_status"),
@@ -86,6 +90,10 @@ public enum ChatConfigEnum {
      * 签到奖励
      */
     SYS_SIGN("sys_sign"),
+    /**
+     *  批量好友ID
+     */
+    SYS_FRIENDS("sys_friends"),
     /**
      * 邀请奖励
      */

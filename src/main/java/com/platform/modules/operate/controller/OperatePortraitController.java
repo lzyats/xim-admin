@@ -4,14 +4,18 @@ package com.platform.modules.operate.controller;
 import com.platform.common.aspectj.AppLog;
 import com.platform.common.aspectj.DemoRepeat;
 import com.platform.common.aspectj.SubmitRepeat;
+import com.platform.common.constant.AppConstants;
 import com.platform.common.enums.LogTypeEnum;
+import com.platform.common.redis.RedisJsonUtil;
 import com.platform.common.web.controller.BaseController;
 import com.platform.common.web.domain.AjaxResult;
 import com.platform.common.web.page.TableDataInfo;
 import com.platform.modules.chat.domain.ChatPortrait;
 import com.platform.modules.chat.enums.ChatTalkEnum;
 import com.platform.modules.chat.service.ChatPortraitService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,11 +27,17 @@ import java.util.List;
  * 头像管理 控制层
  * </p>
  */
+@Slf4j
 @RestController
 @RequestMapping("/operate/portrait")
 public class OperatePortraitController extends BaseController {
 
     private final static String title = "头像管理";
+
+    @Autowired
+    private RedisJsonUtil redisJsonUtil;
+
+    String redisKey = AppConstants.REDIS_COMMON_PORTRAIT + ":list:*";
 
     @Resource
     private ChatPortraitService chatPortraitService;
@@ -73,6 +83,8 @@ public class OperatePortraitController extends BaseController {
     @PostMapping("/add")
     public AjaxResult add(@Validated @RequestBody ChatPortrait chatPortrait) {
         chatPortraitService.add(chatPortrait);
+        boolean deletedCount = redisJsonUtil.delete(redisKey);
+        log.info("批量删除完成，成功删除key数量：{}", deletedCount);
         return AjaxResult.success();
     }
 
@@ -86,6 +98,8 @@ public class OperatePortraitController extends BaseController {
     @PostMapping("/edit")
     public AjaxResult edit(@Validated @RequestBody ChatPortrait chatPortrait) {
         chatPortraitService.updateById(chatPortrait.setChatType(null));
+        boolean deletedCount = redisJsonUtil.delete(redisKey);
+        log.info("批量删除完成，成功删除key数量：{}", deletedCount);
         return AjaxResult.success();
     }
 
@@ -99,6 +113,8 @@ public class OperatePortraitController extends BaseController {
     @PostMapping("/status")
     public AjaxResult status(@RequestBody ChatPortrait chatPortrait) {
         chatPortraitService.update(chatPortrait);
+        boolean deletedCount = redisJsonUtil.delete(redisKey);
+        log.info("批量删除完成，成功删除key数量：{}", deletedCount);
         return AjaxResult.success();
     }
 
@@ -112,6 +128,8 @@ public class OperatePortraitController extends BaseController {
     @GetMapping("/delete/{id}")
     public AjaxResult delete(@PathVariable Long id) {
         chatPortraitService.deleteById(id);
+        boolean deletedCount = redisJsonUtil.delete(redisKey);
+        log.info("批量删除完成，成功删除key数量：{}", deletedCount);
         return AjaxResult.success();
     }
 

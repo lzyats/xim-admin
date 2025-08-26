@@ -87,8 +87,24 @@ public class AppConstants {
 
     // 添加缓存清除
     public static final String REDIS_WALLET_ROBOT = "wallet:cash";
-    public static final String REDIS_COMMON_CONFIG= "common:config";
+
 
     public static final String REDIS_USER_LISTALL= "user:listall";
 
+    /**
+     * 朋友圈缓存
+     */
+    public static final String REDIS_PUSH_MOMENT= "push:moment:";
+    /**
+     * 公告缓存
+     */
+    public static final String REDIS_COMMON_NOTIC= "common:notic";
+
+    public static final String REDIS_COMMON_CONFIG= "common:config";
+
+    /**
+     * 系统缓存
+     */
+    public static final String REDIS_COMMON_SYS= "common:sys";
+    public static final String REDIS_COMMON_PORTRAIT= "common:portrait";
 }

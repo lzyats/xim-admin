@@ -1,7 +1,7 @@
 package com.platform.modules.operate.service.impl;
 
 import com.platform.common.constant.AppConstants;
-import com.platform.common.redis.RedisUtils;
+import com.platform.common.redis.RedisJsonUtil;
 import com.platform.modules.chat.domain.ChatConfig;
 import com.platform.modules.chat.enums.ChatConfigEnum;
 import com.platform.modules.chat.service.ChatConfigService;
@@ -29,7 +29,7 @@ public class OperateConfigServiceImpl implements OperateConfigService {
     private ChatConfigService chatConfigService;
 
     @Autowired
-    private RedisUtils redisUtils;
+    private RedisJsonUtil redisJsonUtil;
 
     private static final Logger logger = LoggerFactory.getLogger(ChatNoticeServiceImpl.class);
 
@@ -60,6 +60,7 @@ public class OperateConfigServiceImpl implements OperateConfigService {
                 .setInvo(configMap.get(ChatConfigEnum.SYS_INVO).getBigDecimal())
                 .setInvoadus(configMap.get(ChatConfigEnum.SYS_INVOADUS).getYesOrNo())
                 .setSendmoment(configMap.get(ChatConfigEnum.SYS_SENDMOMENT).getYesOrNo())
+                .setFriends(configMap.get(ChatConfigEnum.SYS_FRIENDS).getStr())
                 ;
     }
 
@@ -109,9 +110,13 @@ public class OperateConfigServiceImpl implements OperateConfigService {
         chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_INVOADUS).setValue(operateVo.getInvoadus()));
         // 更新
         chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_SENDMOMENT).setValue(operateVo.getSendmoment()));
+        // 更新
+        chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_FRIENDS).setValue(operateVo.getFriends()));
         //清除缓存
-        String redisKey = AppConstants.REDIS_COMMON_CONFIG; // 假设配置缓存KEY
-        redisUtils.delete(redisKey);
+        String redisKey =  AppConstants.REDIS_COMMON_CONFIG+"all";// 假设配置缓存KEY
+        redisJsonUtil.delete(redisKey);
+        redisKey =  AppConstants.REDIS_COMMON_CONFIG+"one";// 假设配置缓存KEY
+        redisJsonUtil.delete(redisKey);
         logger.info("清除缓存：key {}",redisKey);
     }
 

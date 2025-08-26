@@ -12,7 +12,7 @@ public interface FileService {
     /**
      * 获取上传凭证
      */
-    Dict getUploadToken();
+    Dict getUploadToken(String fileExt);
 
     /**
      * 文件上传

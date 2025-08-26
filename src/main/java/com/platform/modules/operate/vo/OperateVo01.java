@@ -16,12 +16,17 @@ public class OperateVo01 {
      * 内容
      */
     @NotBlank(message = "内容不能为空")
-    @Size(max = 200, message = "内容不能超过200个字符")
     private String content;
     /**
      * 状态
      */
     @NotNull(message = "状态不能为空")
     private YesOrNoEnum status;
+
+    /**
+     * 状态
+     */
+    @NotNull(message = "公告类型不能为空")
+    private int notype;
 
 }

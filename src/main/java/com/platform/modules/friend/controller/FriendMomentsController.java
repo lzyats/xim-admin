@@ -5,7 +5,9 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.platform.common.aspectj.AppLog;
+import com.platform.common.constant.AppConstants;
 import com.platform.common.enums.LogTypeEnum;
+import com.platform.common.redis.RedisUtils;
 import com.platform.common.web.page.TableDataInfo;
 import com.platform.common.web.domain.AjaxResult;
 import com.platform.modules.friend.dao.FriendMomentsDao;
@@ -38,6 +40,9 @@ public class FriendMomentsController extends BaseController {
 
     @Resource
     private FriendMomentsDao friendMomentsDao;
+
+    @Resource
+    private RedisUtils redisUtils;
 
     @Resource
     private FriendMomentsServiceImpl friendMomentsServiceimpl;
@@ -97,6 +102,9 @@ public class FriendMomentsController extends BaseController {
     public AjaxResult delete(@PathVariable Long id) {
         // 发送广播 先广播，不然删除了没有任何记录了
         friendMomentsServiceimpl.getmoments(id,1);
+        // 删除缓存记录
+        //String redisKey = AppConstants.REDIS_PUSH_MOMENT + id1;
+        //redisUtils.delete(redisKey);
         friendMomentsService.deleteById(id);
         return AjaxResult.successMsg("删除成功");
     }

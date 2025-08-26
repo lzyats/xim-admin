@@ -39,7 +39,7 @@ public class FileController {
      */
     @GetMapping(value = "/getUploadToken")
     public AjaxResult getUploadToken() {
-        return AjaxResult.success(fileService.getUploadToken());
+        return AjaxResult.success(fileService.getUploadToken(""));
     }
 
     /**

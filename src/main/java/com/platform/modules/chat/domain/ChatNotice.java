@@ -55,4 +55,10 @@ public class ChatNotice extends BaseEntity {
     @JsonDeserialize(using = JsonDateDeserializer.class)
     private Date createTime;
 
+    @JsonDeserialize(using = JsonDateDeserializer.class)
+    private Date updateTime;
+
+
+    private int isindex;
+
 }
