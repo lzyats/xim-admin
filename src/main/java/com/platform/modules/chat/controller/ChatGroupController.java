@@ -7,6 +7,8 @@ import com.platform.common.web.controller.BaseController;
 import com.platform.common.web.domain.AjaxResult;
 import com.platform.common.web.page.TableDataInfo;
 import com.platform.modules.chat.domain.ChatGroup;
+import com.platform.modules.chat.enums.ChatConfigEnum;
+import com.platform.modules.chat.service.ChatConfigService;
 import com.platform.modules.chat.service.ChatGroupLogService;
 import com.platform.modules.chat.service.ChatGroupService;
 import com.platform.modules.chat.service.ChatMsgService;
@@ -37,6 +39,9 @@ public class ChatGroupController extends BaseController {
 
     @Resource
     private ChatGroupLogService chatGroupLogService;
+
+    @Resource
+    private ChatConfigService chatConfigService;
 
     /**
      * 列表数据
@@ -97,8 +102,9 @@ public class ChatGroupController extends BaseController {
     @RequiresPermissions(value = {"chat:group:msg"})
     @GetMapping(value = "/message/{groupId}")
     public TableDataInfo getMessage(@PathVariable Long groupId) {
-        startPage("msgId desc");
-        return getDataTable(chatMsgService.getMessage(groupId));
+        int todb=chatConfigService.queryConfig(ChatConfigEnum.SYS_MSGTODB).getInt();
+        if(todb!=2)   startPage("msgId desc");
+        return getDataTable(chatMsgService.getMessage(groupId,todb));
     }
 
     /**

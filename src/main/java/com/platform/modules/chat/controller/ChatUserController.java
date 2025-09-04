@@ -17,6 +17,7 @@ import com.platform.common.web.page.TableDataInfo;
 import com.platform.modules.chat.domain.ChatUser;
 import com.platform.modules.chat.enums.BannedTimeEnum;
 import com.platform.modules.chat.enums.BannedTypeEnum;
+import com.platform.modules.chat.enums.ChatConfigEnum;
 import com.platform.modules.chat.service.*;
 import com.platform.modules.chat.vo.*;
 import com.platform.modules.wallet.service.WalletInfoService;
@@ -57,6 +58,9 @@ public class ChatUserController extends BaseController {
 
     @Resource
     private ChatUserLogService chatUserLogService;
+
+    @Resource
+    private ChatConfigService chatConfigService;
 
     /**
      * 列表数据
@@ -226,8 +230,9 @@ public class ChatUserController extends BaseController {
     @RequiresPermissions(value = {"chat:user:msg"})
     @GetMapping(value = "/message/{groupId}")
     public TableDataInfo getMessage(@PathVariable Long groupId) {
-        startPage("msgId desc");
-        return getDataTable(chatMsgService.getMessage(groupId));
+        int todb=chatConfigService.queryConfig(ChatConfigEnum.SYS_MSGTODB).getInt();
+        if(todb!=2)   startPage("msgId desc");
+        return getDataTable(chatMsgService.getMessage(groupId,todb));
     }
 
     /**

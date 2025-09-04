@@ -59,6 +59,7 @@ public class OperateConfigServiceImpl implements OperateConfigService {
                 .setSign(configMap.get(ChatConfigEnum.SYS_SIGN).getBigDecimal())
                 .setInvo(configMap.get(ChatConfigEnum.SYS_INVO).getBigDecimal())
                 .setInvoadus(configMap.get(ChatConfigEnum.SYS_INVOADUS).getYesOrNo())
+                .setMsgtodb(configMap.get(ChatConfigEnum.SYS_MSGTODB).getInt())
                 .setSendmoment(configMap.get(ChatConfigEnum.SYS_SENDMOMENT).getYesOrNo())
                 .setFriends(configMap.get(ChatConfigEnum.SYS_FRIENDS).getStr())
                 ;
@@ -108,6 +109,8 @@ public class OperateConfigServiceImpl implements OperateConfigService {
         chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_INVO).setValue(operateVo.getInvo()));
         // 更新
         chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_INVOADUS).setValue(operateVo.getInvoadus()));
+        // 更新
+        chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_MSGTODB).setValue(operateVo.getMsgtodb()));
         // 更新
         chatConfigService.updateById(new ChatConfig().setConfigKey(ChatConfigEnum.SYS_SENDMOMENT).setValue(operateVo.getSendmoment()));
         // 更新

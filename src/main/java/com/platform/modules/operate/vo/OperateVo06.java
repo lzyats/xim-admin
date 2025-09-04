@@ -117,8 +117,14 @@ public class OperateVo06 {
     /**
      * 推荐加好友开关
      */
-    @NotNull(message = " 推荐加好友开关")
+    @NotNull(message = "推荐加好友开关不能为空")
     private YesOrNoEnum invoadus;
+
+    /**
+     * 推荐加好友开关
+     */
+    @NotNull(message = "消息存入数据库方式不能为空")
+    private Integer msgtodb;
     /**
      * 签到奖励
      */

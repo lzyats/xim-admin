@@ -14,6 +14,6 @@ public interface ChatMsgService extends BaseService<ChatMsg> {
     /**
      * 数据消息
      */
-    PageInfo getMessage(Long groupId);
+    PageInfo getMessage(Long groupId,int todb);
 
 }
